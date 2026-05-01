@@ -116,3 +116,4 @@ const Home = () => {
 }
 
 export default Home;
+// And finally Footer completed
