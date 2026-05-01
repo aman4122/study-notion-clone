@@ -9,7 +9,7 @@ const CodeBlocks = (
   return (
     <div className={`flex ${position} my-20 justify-between gap-10`}>
 
-      {/* Section 1 */}
+
       <div className='w-[50%] flex flex-col gap-8'>
         {heading}
         <div className='text-richblack-300 text-base font-medium'>{subheading}</div>
@@ -27,8 +27,6 @@ const CodeBlocks = (
         </div>
       </div>
 
-
-      {/* Section 2 */}
       <div className='h-fit flex flex-row text-[14px] w-[100%] py-4 lg:w-[500px]'>
         {/* HW: BG-GRADIENT */}
         <div className='text-center flex flex-col w-[10%] text-richblack-400 font-mono font-bold select-none'>
@@ -53,13 +51,13 @@ const CodeBlocks = (
             sequence={[codeblock, 1000, ""]}
             repeat={Infinity}
             cursor={true}
-            style= {
+            style={
               {
-                whiteSpace:"pre-line",
-                display:"block"
+                whiteSpace: "pre-line",
+                display: "block"
               }
-            }     
-            omitDeletionAnimation={true}       
+            }
+            omitDeletionAnimation={true}
           />
         </div>
       </div>
