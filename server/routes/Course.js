@@ -46,7 +46,8 @@ router.get("/getAllCourses", showAllCourses);
 
 router.post("/createCategory", auth, isAdmin, createCategory)
 
-router.get("/showAllCategories", auth, isAdmin, showAllCategories)
+// router.get("/showAllCategories", auth, isAdmin, showAllCategories)
+router.get("/showAllCategories",  showAllCategories)
 
 
 

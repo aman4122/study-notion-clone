@@ -1,11 +1,11 @@
-export const NavbarLinks = [
+const NavbarLinks = [
   {
     title: "Home",
     path: "/",
   },
   {
     title: "Catalog",
-    // path: '/catalog',
+    path: '/catalog',
   },
   {
     title: "About Us",
@@ -16,3 +16,4 @@ export const NavbarLinks = [
     path: "/contact",
   },
 ];
+export default NavbarLinks;

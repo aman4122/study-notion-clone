@@ -42,11 +42,20 @@ exports.updateProfile = async (req, res) => {
         profileDetails.contact = contact;
         await profileDetails.save();
 
+        if (req.body.firstName) {
+            userDetails.firstName = req.body.firstName;
+        }
+        if (req.body.lastName) {
+            userDetails.lastName = req.body.lastName;
+        }
+        await userDetails.save();
+
         //return response
         return res.status(200).json({
             success: true,
             message: "Profile Updated successfully!!",
-            profileDetails
+            profileDetails,
+            userDetails
         });
 
 
