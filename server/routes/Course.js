@@ -10,6 +10,7 @@ const {
     createCategory,
     showAllCategories,
         getCategoryPageDetails,
+        seedCategories,
 } = require("../controllers/Categories")
 const {
     auth,
@@ -53,6 +54,7 @@ router.post("/createCategory", auth, isAdmin, createCategory)
 
 // router.get("/showAllCategories", auth, isAdmin, showAllCategories)
 router.get("/showAllCategories",  showAllCategories)
+router.get("/seedCategories", seedCategories)
 
 
 
@@ -77,5 +79,14 @@ router.delete("/deleteSubSection",auth,isAdmin,deleteSubSection)
 
 
 router.get("/getEnrolledCourses", auth, getEnrolledCourses)    
+
+
+const { getCoursePreview, getCourseFullDetails } = require("../controllers/CourseAccess");
+router.post("/getCoursePreview", auth, getCoursePreview);
+router.post("/getCourseFullDetails", auth, getCourseFullDetails);
+
+const { getInstructorCourses, seedCourses } = require("../controllers/Course");
+router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
+router.get("/seedCourses", seedCourses);
 
 module.exports = router;

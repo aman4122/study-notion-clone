@@ -19,9 +19,18 @@ export const profileEndpoints = {
     GET_USER_DETAILS_API: BASE_URL + "/profile/getUserDetails",
     UPDATE_DISPLAY_PICTURE_API: BASE_URL + "/profile/updateDisplayPicture",
     UPDATE_PROFILE_API: BASE_URL + "/profile/updateProfile",
+    UPDATE_EMAIL_API: BASE_URL + "/profile/updateEmail",
 }
 
 export const studentEndpoints = {
     COURSE_PAYMENT_API: BASE_URL + "/payments/capturePayment",
     COURSE_VERIFY_API: BASE_URL + "/payments/verifyPayment",
+    SEND_PAYMENT_SUCCESS_EMAIL_API: BASE_URL + "/payments/sendPaymentSuccessEmail",
+}
+
+export const courseEndpoints = {
+    CREATE_COURSE_API: BASE_URL + "/course/createCourse",
+    CREATE_SECTION_API: BASE_URL + "/course/addSection",
+    CREATE_SUBSECTION_API: BASE_URL + "/course/addSubSection",
+    GET_INSTRUCTOR_COURSES_API: BASE_URL + "/course/getInstructorCourses",
 }

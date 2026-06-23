@@ -14,6 +14,12 @@ import MyProfile from "./components/core/Dashboard/MyProfile";
 import Settings from "./pages/Settings";
 import EnrolledCourses from "./components/core/Dashboard/EnrolledCourses"
 import Cart from "./components/core/Dashboard/Cart"
+import InstructorDashboard from "./components/core/Dashboard/InstructorDashboard/InstructorDashboard";
+import InstructorCourses from "./components/core/Dashboard/InstructorDashboard/InstructorCourses";
+import AddCourse from "./components/core/Dashboard/InstructorDashboard/AddCourse";
+import AdminDashboard from "./components/core/Dashboard/AdminDashboard/AdminDashboard";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 
 
@@ -29,9 +35,8 @@ function App() {
 
         <Route path="/courses/:courseId" element={<CourseDetails />} />
 
-
-
-
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<OpenRoute><Login /></OpenRoute>} />
         <Route path="/signup" element={
 
@@ -53,12 +58,14 @@ function App() {
         >
           <Route path="dashboard/my-profile" element={<MyProfile />} />
           <Route path="dashboard/settings" element={<Settings />} />
-
-          <Route path="dashboard/my-profile" element={<MyProfile />} />
-          <Route path="dashboard/settings" element={<Settings />} />
           <Route path="dashboard/enrolled-courses" element={<EnrolledCourses />} />  
           <Route path="dashboard/cart" element={<Cart />} />                         
 
+          {/* New Additions */}
+          <Route path="dashboard/instructor" element={<InstructorDashboard />} />
+          <Route path="dashboard/my-courses" element={<InstructorCourses />} />
+          <Route path="dashboard/add-course" element={<AddCourse />} />
+          <Route path="dashboard/admin" element={<AdminDashboard />} />
 
         </Route>
 

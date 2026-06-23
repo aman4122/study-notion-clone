@@ -77,26 +77,47 @@ const CourseDetails = () => {
   const dispatch = useDispatch()
   const { courseId } = useParams()
   const [courseData, setCourseData] = useState(null)
+  const [fullCourseData, setFullCourseData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isEnrolled, setIsEnrolled] = useState(false)
 
   useEffect(() => {
-    const fetchCourseDetails = async () => {
+    const fetchCourse = async () => {
       try {
         setLoading(true)
-        const res = await apiConnector(
+        // Step 1: Fetch preview (basic info + studentsEnrolled, NO courseContent)
+        const previewRes = await apiConnector(
           "POST",
-          "http://localhost:4000/api/v1/course/getCourseDetails",
+          "http://localhost:4000/api/v1/course/getCoursePreview",
           { courseId },
           { Authorization: `Bearer ${token}` }
         )
-        setCourseData(res?.data?.data)
+        const preview = previewRes?.data?.data
+        setCourseData(preview)
+
+        // Step 2: Check enrollment using string comparison
+        const enrolled = preview?.studentsEnrolled?.some(
+          (sid) => String(sid) === String(user?._id) || String(sid?._id) === String(user?._id)
+        )
+        setIsEnrolled(enrolled)
+
+        // Step 3: If enrolled, fetch full details (sections + subsections)
+        if (enrolled) {
+          const fullRes = await apiConnector(
+            "POST",
+            "http://localhost:4000/api/v1/course/getCourseFullDetails",
+            { courseId },
+            { Authorization: `Bearer ${token}` }
+          )
+          setFullCourseData(fullRes?.data?.data)
+        }
       } catch (error) {
         console.log("Could not fetch course details", error)
       } finally {
         setLoading(false)
       }
     }
-    if (courseId) fetchCourseDetails()
+    if (courseId) fetchCourse()
   }, [courseId])
 
   const handleBuyCourse = () => {
@@ -117,6 +138,8 @@ const CourseDetails = () => {
       dispatch(addToCart(courseData))
     }
   }
+
+  // isEnrolled is now managed by state (set during useEffect above)
 
   if (loading) return (
     <div className="min-h-screen bg-richblack-900 flex items-center justify-center text-white text-xl">
@@ -145,18 +168,32 @@ const CourseDetails = () => {
           </p>
           <div className="flex items-center gap-6 mt-2">
             <span className="text-3xl font-bold text-yellow-50">Rs. {courseData?.price}</span>
-            <button
-              onClick={handleAddToCart}
-              className="border border-yellow-50 text-yellow-50 font-bold px-8 py-3 rounded-lg hover:bg-yellow-50 hover:text-richblack-900 transition-all text-lg"
-            >
-              Add to Cart
-            </button>
-            <button
-              onClick={handleBuyCourse}
-              className="bg-yellow-50 text-richblack-900 font-bold px-8 py-3 rounded-lg hover:bg-yellow-100 transition-all text-lg"
-            >
-              Buy Now
-            </button>
+            {isEnrolled ? (
+              <div className="flex items-center gap-4">
+                <span className="text-green-400 font-semibold text-lg">✓ Already Enrolled</span>
+                <button
+                  onClick={() => navigate("/dashboard/my-profile")}
+                  className="bg-yellow-50 text-richblack-900 font-bold px-8 py-3 rounded-lg hover:bg-yellow-100 transition-all text-lg"
+                >
+                  Go to Dashboard
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={handleAddToCart}
+                  className="border border-yellow-50 text-yellow-50 font-bold px-8 py-3 rounded-lg hover:bg-yellow-50 hover:text-richblack-900 transition-all text-lg"
+                >
+                  Add to Cart
+                </button>
+                <button
+                  onClick={handleBuyCourse}
+                  className="bg-yellow-50 text-richblack-900 font-bold px-8 py-3 rounded-lg hover:bg-yellow-100 transition-all text-lg"
+                >
+                  Buy Now
+                </button>
+              </>
+            )}
           </div>
 
 
@@ -165,25 +202,41 @@ const CourseDetails = () => {
         </div>
       </div>
 
-      {/* What You Will Learn */}
-      <div className="mx-auto max-w-maxContent w-11/12 py-10">
-        <div className="border border-richblack-600 p-6 rounded-lg mb-8">
-          <h2 className="text-2xl font-bold mb-4">What You Will Learn</h2>
-          <p className="text-richblack-200">{courseData?.whatYouWillLearn}</p>
-        </div>
+      {/* Course Content — only visible to enrolled users */}
+      {isEnrolled && fullCourseData ? (
+        <div className="mx-auto max-w-maxContent w-11/12 py-10">
+          <div className="border border-richblack-600 p-6 rounded-lg mb-8">
+            <h2 className="text-2xl font-bold mb-4">What You Will Learn</h2>
+            <p className="text-richblack-200">{fullCourseData?.whatYouWillLearn}</p>
+          </div>
 
-        {/* Sections + SubSections */}
-        <h2 className="text-2xl font-bold mb-4">Course Content</h2>
-        <div className="flex flex-col gap-4">
-          {courseData?.courseContent?.length > 0 ? (
-            courseData.courseContent.map((section, idx) => (
-              <SectionAccordion key={section._id} section={section} defaultOpen={idx === 0} />
-            ))
-          ) : (
-            <p className="text-richblack-400">No content available yet.</p>
-          )}
+          {/* Sections + SubSections */}
+          <h2 className="text-2xl font-bold mb-4">Course Content</h2>
+          <div className="flex flex-col gap-4">
+            {fullCourseData?.courseContent?.length > 0 ? (
+              fullCourseData.courseContent.map((section, idx) => (
+                <SectionAccordion key={section._id} section={section} defaultOpen={idx === 0} />
+              ))
+            ) : (
+              <p className="text-richblack-400">No content available yet.</p>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="mx-auto max-w-maxContent w-11/12 py-10">
+          {courseData?.thumbnail && (
+            <img
+              src={courseData.thumbnail}
+              alt={courseData.courseName}
+              className="w-full max-h-[400px] object-cover rounded-lg mb-6"
+            />
+          )}
+          <div className="border border-richblack-600 p-6 rounded-lg">
+            <h2 className="text-2xl font-bold mb-4 text-richblack-5">Course Content</h2>
+            <p className="text-richblack-300">Purchase this course to access all sections, lectures, and resources.</p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

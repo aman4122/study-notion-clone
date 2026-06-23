@@ -287,3 +287,85 @@ exports.getEnrolledCourses = async (req, res) => {
         });
     }
 }
+
+// Get a list of Course for a given Instructor
+exports.getInstructorCourses = async (req, res) => {
+    try {
+        const instructorId = req.user.id;
+        const instructorCourses = await Course.find({
+            instructor: instructorId,
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            data: instructorCourses,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to retrieve instructor courses",
+            error: error.message,
+        });
+    }
+}
+
+exports.seedCourses = async (req, res) => {
+    try {
+        const Category = require('../models/Category');
+        const User = require('../models/User');
+        const Profile = require('../models/Profile');
+        const Course = require('../models/Course');
+
+        const categories = await Category.find({});
+        if (categories.length === 0) {
+            return res.status(400).json({ success: false, message: "No categories found." });
+        }
+
+        // Find or create an instructor
+        let instructor = await User.findOne({ accountType: "Instructor" });
+        if (!instructor) {
+            const profile = await Profile.create({ about: "Dummy Instructor" });
+            instructor = await User.create({
+                firstName: "Dummy",
+                lastName: "Instructor",
+                email: "dummy@instructor.com",
+                password: "password123",
+                accountType: "Instructor",
+                additionalDetails: profile._id,
+                image: "https://api.dicebear.com/5.x/initials/svg?seed=Dummy%20Instructor",
+                token: "dummy"
+            });
+        }
+
+        let addedCourses = [];
+        for (let cat of categories) {
+            const courseName = `Mastering ${cat.name}`;
+            const existingCourse = await Course.findOne({ courseName, category: cat._id });
+            if (!existingCourse) {
+                const newCourse = await Course.create({
+                    courseName: courseName,
+                    courseDescription: `A comprehensive course on ${cat.name} designed to take you from beginner to expert.`,
+                    instructor: instructor._id,
+                    whatYouWillLearn: `Everything about ${cat.name}.`,
+                    price: Math.floor(Math.random() * 5000) + 1000,
+                    thumbnail: `https://via.placeholder.com/800x400?text=${encodeURIComponent(cat.name)}`,
+                    category: cat._id,
+                    studentsEnrolled: []
+                });
+
+                // Add course to instructor
+                await User.findByIdAndUpdate(instructor._id, { $push: { courses: newCourse._id } });
+                // Add course to category
+                await Category.findByIdAndUpdate(cat._id, { $push: { courses: newCourse._id } });
+
+                addedCourses.push(newCourse.courseName);
+            }
+        }
+
+        res.status(200).json({ success: true, message: "Courses seeded", addedCourses });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Error seeding courses", error: err.message });
+    }
+}

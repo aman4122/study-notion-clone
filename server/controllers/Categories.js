@@ -373,4 +373,39 @@ exports.getCategoryPageDetails = async (req, res) => {
     }
 }
 
+
+
+
+
+exports.seedCategories = async (req, res) => {
+    try {
+        const categories = [
+            { name: "Web Development", description: "Learn frontend and backend web development including HTML, CSS, JavaScript, React, Node.js and more." },
+            { name: "Data Science", description: "Explore data analysis, visualization, statistics and tools like Pandas, NumPy and Matplotlib." },
+            { name: "Machine Learning", description: "Master ML algorithms, model training, evaluation and frameworks like TensorFlow and PyTorch." },
+            { name: "Android Development", description: "Build Android apps using Java, Kotlin and Android Studio." },
+            { name: "Cloud Computing", description: "Learn AWS, Azure, GCP and cloud infrastructure concepts." },
+            { name: "Cybersecurity", description: "Understand ethical hacking, network security, cryptography and penetration testing." },
+            { name: "DSA / Competitive Programming", description: "Master Data Structures, Algorithms and problem solving for coding interviews and contests." },
+            { name: "UI/UX Design", description: "Design beautiful user interfaces and experiences using Figma, wireframing and design principles." },
+        ];
+
+        await Tag.insertMany(categories);
+
+        return res.status(200).json({
+            success: true,
+            message: "Categories seeded successfully!!",
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to seed categories!!",
+            error: err.message,
+        });
+    }
+};
+
+
+
 //                                             METHOD 2    ==== MONGODB AGGREGATORS   {OPTIMAL}

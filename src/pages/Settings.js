@@ -284,6 +284,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { FiUpload } from "react-icons/fi"
 import { updateDisplayPicture, updateProfile, changePassword } from "../services/operations/profileAPI"
+import { saveAllSettings } from "../services/operations/settingsSaveAllAPI"
 
 const Settings = () => {
   const { user } = useSelector((state) => state.profile)
@@ -309,6 +310,17 @@ const Settings = () => {
     newPassword: "",
     confirmPassword: "",
   })
+
+  const [emailData, setEmailData] = useState({
+    email: user?.email || "",
+  })
+
+  const handleEmailChange = (e) => {
+    setEmailData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }))
+  }
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -340,27 +352,16 @@ const Settings = () => {
     }))
   }
 
-  // ✅ SINGLE SAVE ALL HANDLER
+  // ✅ SINGLE SAVE ALL HANDLER — uses unified saveAllSettings (one toast for everything)
   const handleSaveAll = async (e) => {
     e.preventDefault()
-
-    // 1. Profile picture upload karo agar naya select kiya
-    if (imageFile) {
-      const formData = new FormData()
-      formData.append("displayPicture", imageFile)
-      await dispatch(updateDisplayPicture(token, formData))
-    }
-
-    // 2. Profile info save karo
-    await dispatch(updateProfile(token, profileData))
-
-    // 3. Password change karo agar fill kiya
-    if (passwordData.password && passwordData.newPassword && passwordData.confirmPassword) {
-      await dispatch(changePassword(token, passwordData))
-    }
-
-    // 4. Profile page pe route karo
-    navigate("/dashboard/my-profile")
+    await dispatch(saveAllSettings(token, {
+      imageFile,
+      profileData,
+      passwordData,
+      emailData: emailData.email !== user?.email ? emailData : null,
+      navigate,
+    }))
   }
 
   return (
@@ -466,6 +467,16 @@ const Settings = () => {
               name="about"
               value={profileData.about}
               onChange={handleProfileChange}
+              className="rounded-md bg-richblack-700 p-3 text-richblack-5 outline-none"
+            />
+          </label>
+          <label className="flex flex-col gap-y-1">
+            <span className="text-sm text-richblack-300">Email</span>
+            <input
+              type="email"
+              name="email"
+              value={emailData.email}
+              onChange={handleEmailChange}
               className="rounded-md bg-richblack-700 p-3 text-richblack-5 outline-none"
             />
           </label>

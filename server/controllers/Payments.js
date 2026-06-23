@@ -195,8 +195,8 @@ exports.sendPaymentSuccessEmail =async(req,res)=>{
 
         await mailSender(
             enrolledStudent.email,
-            `Paymnet received`,
-            this.PaymentSuccessEmail(`${enrolledStudent.firstName}`,
+            `Payment received`,
+            paymentSuccessEmail(`${enrolledStudent.firstName}`,
                 amount/100,orderId,paymentId
             )
         )

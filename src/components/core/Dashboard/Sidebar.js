@@ -94,26 +94,43 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useLocation, Link } from "react-router-dom"
-import { VscAccount } from "react-icons/vsc"
+import { VscAccount, VscDashboard, VscVm, VscAdd } from "react-icons/vsc"
 import { MdOutlinePlayLesson } from "react-icons/md"
 import { AiOutlineShoppingCart } from "react-icons/ai"
 import { IoSettingsOutline } from "react-icons/io5"
 import { TbLogout } from "react-icons/tb"
 import { logout } from "../../../services/operations/authAPI"
 
-const sidebarLinks = [
-  { id: 1, name: "My Profile",       path: "/dashboard/my-profile",       icon: <VscAccount size={20} /> },
-  { id: 2, name: "Enrolled Courses", path: "/dashboard/enrolled-courses",  icon: <MdOutlinePlayLesson size={20} /> },
-  { id: 3, name: "Your Cart",        path: "/dashboard/cart",              icon: <AiOutlineShoppingCart size={20} /> },
-  { id: 4, name: "Settings",         path: "/dashboard/settings",          icon: <IoSettingsOutline size={20} /> },
-]
-
 const Sidebar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useSelector((state) => state.profile)
 
   const matchRoute = (path) => location.pathname === path
+
+  const sidebarLinks = [
+    { id: 1, name: "My Profile", path: "/dashboard/my-profile", icon: <VscAccount size={20} /> },
+  ]
+
+  if (user?.accountType === "Student") {
+    sidebarLinks.push(
+      { id: 2, name: "Enrolled Courses", path: "/dashboard/enrolled-courses", icon: <MdOutlinePlayLesson size={20} /> },
+      { id: 3, name: "Your Cart", path: "/dashboard/cart", icon: <AiOutlineShoppingCart size={20} /> }
+    )
+  } else if (user?.accountType === "Instructor") {
+    sidebarLinks.push(
+      { id: 2, name: "Dashboard", path: "/dashboard/instructor", icon: <VscDashboard size={20} /> },
+      { id: 3, name: "My Courses", path: "/dashboard/my-courses", icon: <VscVm size={20} /> },
+      { id: 4, name: "Add Course", path: "/dashboard/add-course", icon: <VscAdd size={20} /> }
+    )
+  } else if (user?.accountType === "Admin") {
+    sidebarLinks.push(
+      { id: 2, name: "Dashboard", path: "/dashboard/admin", icon: <VscDashboard size={20} /> }
+    )
+  }
+
+  sidebarLinks.push({ id: 99, name: "Settings", path: "/dashboard/settings", icon: <IoSettingsOutline size={20} /> })
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-3.5rem)] w-[222px] border-r border-richblack-700 bg-richblack-800 py-10">
