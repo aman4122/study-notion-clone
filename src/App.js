@@ -12,6 +12,11 @@ import PrivateRoute from "./components/core/Auth/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import MyProfile from "./components/core/Dashboard/MyProfile";
 import Settings from "./pages/Settings";
+import EnrolledCourses from "./components/core/Dashboard/EnrolledCourses"
+import Cart from "./components/core/Dashboard/Cart"
+
+
+
 
 function App() {
   return (
@@ -22,13 +27,14 @@ function App() {
 
         <Route path="/catalog/:catalogName" element={<Catalog />} />
 
-        <Route path="/catalog/:courseId" element={<CourseDetails />} />
+        <Route path="/courses/:courseId" element={<CourseDetails />} />
 
 
 
 
         <Route path="/login" element={<OpenRoute><Login /></OpenRoute>} />
         <Route path="/signup" element={
+
           <OpenRoute>
             <Signup />
           </OpenRoute>
@@ -38,7 +44,7 @@ function App() {
 
         <Route path="/verify-email" element={<VerifyEmail />} />
 
-        <Route 
+        <Route
           element={
             <PrivateRoute>
               <Dashboard />
@@ -47,6 +53,13 @@ function App() {
         >
           <Route path="dashboard/my-profile" element={<MyProfile />} />
           <Route path="dashboard/settings" element={<Settings />} />
+
+          <Route path="dashboard/my-profile" element={<MyProfile />} />
+          <Route path="dashboard/settings" element={<Settings />} />
+          <Route path="dashboard/enrolled-courses" element={<EnrolledCourses />} />  
+          <Route path="dashboard/cart" element={<Cart />} />                         
+
+
         </Route>
 
       </Routes>

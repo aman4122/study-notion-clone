@@ -156,7 +156,7 @@ const enrollStudents = async (courses, userId, res) => {
             //to send mail
 
             const emailResponse = await mailSender(
-                enrollStudent.email,
+                enrolledStudent.email,
                 `Successfully Enrolled into ${enrolledCourses.courseName}`,
                 courseEnrollmentEmail(enrolledCourses.courseName, `${enrolledStudent.firstName}`)
             )
@@ -173,6 +173,39 @@ const enrollStudents = async (courses, userId, res) => {
 
 }
 
+
+
+
+
+exports.sendPaymentSuccessEmail =async(req,res)=>{
+    const {orderId,paymentId,
+    amount} = req.body;
+
+    const userId=req.user.id;
+
+    if(!orderId || !paymentId || !amount || !userId){
+        return res.status(400).json({success:false, message:"Please provide all details!!!"});
+    }
+
+
+    try{
+        //find studnet 
+        const enrolledStudent = await User.findById(userId);
+        const { paymentSuccessEmail } = require("../mail/templates/paymentSuccessEmail");
+
+        await mailSender(
+            enrolledStudent.email,
+            `Paymnet received`,
+            this.PaymentSuccessEmail(`${enrolledStudent.firstName}`,
+                amount/100,orderId,paymentId
+            )
+        )
+    }
+    catch(err){
+        console.log("Error in sending mail",err);
+        return res.status(500).json({success:false,message:"Could not send mail."})
+    }
+}
 
 
 

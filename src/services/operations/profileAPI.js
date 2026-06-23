@@ -7,13 +7,21 @@ import { logout } from "./authAPI"
 const { GET_USER_DETAILS_API, UPDATE_DISPLAY_PICTURE_API, UPDATE_PROFILE_API } = profileEndpoints
 const { CHANGE_PASSWORD_API } = endpoints
 
+const getCleanToken = (token) => {
+  if (typeof token === "string") {
+    return token.replace(/^"(.*)"$/, "$1");
+  }
+  return token;
+}
+
 export function getUserDetails(token, navigate) {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...")
     dispatch(setLoading(true))
+    const cleanToken = getCleanToken(token)
     try {
       const response = await apiConnector("GET", GET_USER_DETAILS_API, null, {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${cleanToken}`,
       })
       console.log("GET_USER_DETAILS API RESPONSE............", response)
 
@@ -39,6 +47,7 @@ export function getUserDetails(token, navigate) {
 export function updateDisplayPicture(token, formData) {
   return async (dispatch) => {
     const toastId = toast.loading("Updating Profile Picture...")
+    const cleanToken = getCleanToken(token)
     try {
       const response = await apiConnector(
         "PUT",
@@ -46,7 +55,7 @@ export function updateDisplayPicture(token, formData) {
         formData,
         {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${cleanToken}`,
         }
       )
       console.log("UPDATE_DISPLAY_PICTURE API RESPONSE............", response)
@@ -68,9 +77,10 @@ export function updateDisplayPicture(token, formData) {
 export function updateProfile(token, formData, navigate) {
   return async (dispatch) => {
     const toastId = toast.loading("Updating Profile...")
+    const cleanToken = getCleanToken(token)
     try {
       const response = await apiConnector("PUT", UPDATE_PROFILE_API, formData, {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${cleanToken}`,
       })
       console.log("UPDATE_PROFILE API RESPONSE............", response)
 
@@ -79,7 +89,8 @@ export function updateProfile(token, formData, navigate) {
       }
       
       toast.success("Profile Updated Successfully")
-      dispatch(getUserDetails(token, navigate))
+      dispatch(getUserDetails(cleanToken, navigate))
+      navigate("/dashboard/my-profile")
     } catch (error) {
       console.log("UPDATE_PROFILE API ERROR............", error)
       toast.error(error.response?.data?.message || "Could Not Update Profile")
@@ -91,9 +102,10 @@ export function updateProfile(token, formData, navigate) {
 export function changePassword(token, formData, navigate) {
   return async (dispatch) => {
     const toastId = toast.loading("Updating Password...")
+    const cleanToken = getCleanToken(token)
     try {
       const response = await apiConnector("PUT", CHANGE_PASSWORD_API, formData, {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${cleanToken}`,
       })
       console.log("CHANGE_PASSWORD API RESPONSE............", response)
 

@@ -259,3 +259,31 @@ exports.getAllDetails = async (req, res) => {
         }
 
 }
+
+
+
+
+exports.getEnrolledCourses = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const userDetails = await User.findById(userId)
+            .populate({
+                path: "courses",
+                populate: {
+                    path: "courseContent",
+                }
+            })
+            .exec();
+
+        return res.status(200).json({
+            success: true,
+            data: userDetails.courses,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: err.message,
+        });
+    }
+}

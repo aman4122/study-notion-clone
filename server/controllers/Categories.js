@@ -326,7 +326,51 @@ exports.topSellingCourses = async (req, res) => {
     }
 }
 
+exports.getCategoryPageDetails = async (req, res) => {
+    try {
+        const { categoryId } = req.body;
 
+        const selectedCategory = await Tag.findById(categoryId).exec();
 
+        if (!selectedCategory) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found!!!"
+            });
+        }
+
+        const categoryCourses = await Course.find({ category: categoryId })
+            .populate("instructor")
+            .exec();
+
+        const differentCategory = await Tag.find({ _id: { $ne: categoryId } }).exec();
+
+        const mostSellingCourses = await Course.find()
+            .sort({ studentsEnrolled: -1 })
+            .limit(10)
+            .populate("instructor")
+            .exec();
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                selectedCategory: {
+                    ...selectedCategory._doc,
+                    courses: categoryCourses
+                },
+                differentCategory,
+                mostSellingCourses
+            },
+            message: "Category page details fetched successfully!!"
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+}
 
 //                                             METHOD 2    ==== MONGODB AGGREGATORS   {OPTIMAL}

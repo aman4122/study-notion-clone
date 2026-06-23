@@ -2,13 +2,17 @@ import { toast } from "react-hot-toast"
 import { setLoading, setToken } from "../../slices/authSlice"
 import { setUser } from "../../slices/profileSlice"
 import { apiConnector } from "../apiconnector"
-import { endpoints } from "../apis"
+import { endpoints, profileEndpoints } from "../apis"
 
 const {
   SENDOTP_API,
   SIGNUP_API,
   LOGIN_API,
 } = endpoints
+
+const {
+  GET_USER_DETAILS_API,
+} = profileEndpoints
 
 export function sendOtp(email, navigate) {
   return async (dispatch) => {
@@ -95,14 +99,25 @@ export function login(email, password, navigate) {
 
       toast.success("Login Successful")
       dispatch(setToken(response.data.token))
-      const userImage = response.data.user.image
-        ? response.data.user.image
-        : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`
-      dispatch(setUser({ ...response.data.user, image: userImage }))
+      
+      // Fetch fully populated user details
+      const userDetailsResponse = await apiConnector("GET", GET_USER_DETAILS_API, null, {
+        Authorization: `Bearer ${response.data.token}`,
+      })
+      
+      if (!userDetailsResponse.data.success) {
+        throw new Error(userDetailsResponse.data.message)
+      }
+      
+      const userDetails = userDetailsResponse.data.data
+      const userImage = userDetails.image
+        ? userDetails.image
+        : `https://api.dicebear.com/5.x/initials/svg?seed=${userDetails.firstName} ${userDetails.lastName}`
+      dispatch(setUser({ ...userDetails, image: userImage }))
       
       localStorage.setItem("token", JSON.stringify(response.data.token))
-      localStorage.setItem("user", JSON.stringify(response.data.user))
-      navigate("/")
+      localStorage.setItem("user", JSON.stringify(userDetails))
+      navigate("/dashboard/my-profile")
     } catch (error) {
       console.log("LOGIN API ERROR............", error)
       toast.error(error.response?.data?.message || "Login Failed")

@@ -8,7 +8,8 @@ const {
 } = require("../controllers/Course");
 const {
     createCategory,
-    showAllCategories
+    showAllCategories,
+        getCategoryPageDetails,
 } = require("../controllers/Categories")
 const {
     auth,
@@ -32,6 +33,10 @@ const {
     deleteSubSection
 } = require("../controllers/SubSection")
 
+const { getEnrolledCourses } = require("../controllers/Course")
+
+
+
 
 router.post("/createCourse", auth, isInstructor, createCourse);
 
@@ -51,15 +56,13 @@ router.get("/showAllCategories",  showAllCategories)
 
 
 
-
-
 router.post("/addSection",auth,isInstructor,createSection)
 
 router.post("/updateSection",auth,isAdmin,updateSection)
 
 router.delete("/deleteSection",auth,isAdmin,deleteSection)
 
-
+router.post("/getCategoryPageDetails", getCategoryPageDetails)
 
 
 router.post("/getCourseDetails",auth,getAllDetails)
@@ -71,5 +74,8 @@ router.post("/addSubSection",auth,createSubSection)
 router.post("/updateSubSection",auth,updateSubSection)
 router.delete("/deleteSubSection",auth,isAdmin,deleteSubSection)
 
+
+
+router.get("/getEnrolledCourses", auth, getEnrolledCourses)    
 
 module.exports = router;
