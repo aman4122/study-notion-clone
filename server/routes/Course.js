@@ -23,7 +23,8 @@ const {
 const {
     createSection,
     updateSection,
-    deleteSection
+    deleteSection,
+    updateSectionOrder
 } = require("../controllers/Section")
 
 
@@ -64,6 +65,8 @@ router.post("/updateSection",auth,isAdmin,updateSection)
 
 router.delete("/deleteSection",auth,isAdmin,deleteSection)
 
+router.post("/updateSectionOrder", auth, isInstructor, updateSectionOrder)
+
 router.post("/getCategoryPageDetails", getCategoryPageDetails)
 
 
@@ -85,8 +88,25 @@ const { getCoursePreview, getCourseFullDetails } = require("../controllers/Cours
 router.post("/getCoursePreview", auth, getCoursePreview);
 router.post("/getCourseFullDetails", auth, getCourseFullDetails);
 
-const { getInstructorCourses, seedCourses } = require("../controllers/Course");
+const { updateCourseProgress } = require("../controllers/courseProgress");
+router.post("/updateCourseProgress", auth, isStudent, updateCourseProgress);
+
+const { getInstructorCourses, seedCourses, fixDates, publishCourse } = require("../controllers/Course");
 router.get("/getInstructorCourses", auth, isInstructor, getInstructorCourses);
 router.get("/seedCourses", seedCourses);
+router.get("/fixDates", fixDates);
+router.post("/publishCourse", auth, isInstructor, publishCourse);
+
+// INSTRUCTOR SPECIFIC ROUTES FOR EDITING
+router.post("/instructor/updateSection", auth, isInstructor, updateSection);
+router.post("/instructor/deleteSection", auth, isInstructor, deleteSection); // Changed to post for ease or keep delete? wait, I'll use post to match deleteSection controller handling if needed, or keep delete. Controller uses req.body or req.params? Let's check `deleteSection` in `server/controllers/Section.js`. It uses `req.body.sectionId` usually. Express `delete` with body works but `post` is safer. Let's just use `post`.
+router.post("/instructor/deleteSubSection", auth, isInstructor, deleteSubSection);
+
+// RATING AND REVIEW ROUTES
+const { createRating, editRating, getAverageRating, getAllRatingsReviews } = require("../controllers/RatingAndReview");
+router.post("/createRating", auth, isStudent, createRating);
+router.post("/editRating", auth, isStudent, editRating);
+router.post("/getAverageRating", getAverageRating);
+router.get("/getAllRatingsReviews", getAllRatingsReviews);
 
 module.exports = router;

@@ -269,15 +269,67 @@ exports.getEnrolledCourses = async (req, res) => {
         const userDetails = await User.findById(userId)
             .populate({
                 path: "courses",
-                populate: {
-                    path: "courseContent",
-                }
+                populate: [
+                    {
+                        path: "courseContent",
+                        populate: {
+                            path: "subSection",
+                        }
+                    },
+                    {
+                        path: "ratingandReviews"
+                    }
+                ]
             })
+            .populate("courseProgress")
             .exec();
+
+        // Compute totalDuration dynamically if not already saved
+        const coursesWithDuration = userDetails.courses.map(course => {
+            const courseObj = course.toObject();
+            if (!courseObj.totalDuration) {
+                let totalSeconds = 0;
+                if (courseObj.courseContent) {
+                    courseObj.courseContent.forEach(sec => {
+                        if (sec.subSection) {
+                            sec.subSection.forEach(sub => {
+                                if (sub.timeDuration) {
+                                    const parts = sub.timeDuration.split(':').map(Number);
+                                    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) totalSeconds += parts[0] * 60 + parts[1];
+                                    else if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) totalSeconds += parts[0] * 3600 + parts[1] * 60 + parts[2];
+                                }
+                            });
+                        }
+                    });
+                }
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
+                if (totalSeconds > 0) {
+                    courseObj.totalDuration = h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
+                } else {
+                    courseObj.totalDuration = "0m 0s";
+                }
+            }
+            // Calculate progress
+            let totalSubsections = 0;
+            if (courseObj.courseContent) {
+                courseObj.courseContent.forEach(sec => {
+                    totalSubsections += sec?.subSection?.length || 0;
+                });
+            }
+
+            const courseProgress = userDetails.courseProgress.find(progress => progress.courseID.toString() === courseObj._id.toString());
+            const completedVideos = courseProgress?.completedVideos?.length || 0;
+            
+            courseObj.progressPercentage = totalSubsections === 0 ? 0 : Math.round((completedVideos / totalSubsections) * 100);
+
+            return courseObj;
+        });
 
         return res.status(200).json({
             success: true,
-            data: userDetails.courses,
+            data: coursesWithDuration,
         });
     } catch (err) {
         console.log(err);
@@ -294,11 +346,45 @@ exports.getInstructorCourses = async (req, res) => {
         const instructorId = req.user.id;
         const instructorCourses = await Course.find({
             instructor: instructorId,
-        }).sort({ createdAt: -1 });
+        })
+        .populate({
+            path: "courseContent",
+            populate: { path: "subSection" }
+        })
+        .sort({ createdAt: -1 });
+
+        const coursesWithDuration = instructorCourses.map(course => {
+            const courseObj = course.toObject();
+            if (!courseObj.totalDuration) {
+                let totalSeconds = 0;
+                if (courseObj.courseContent) {
+                    courseObj.courseContent.forEach(sec => {
+                        if (sec.subSection) {
+                            sec.subSection.forEach(sub => {
+                                if (sub.timeDuration) {
+                                    const parts = sub.timeDuration.split(':').map(Number);
+                                    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) totalSeconds += parts[0] * 60 + parts[1];
+                                    else if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) totalSeconds += parts[0] * 3600 + parts[1] * 60 + parts[2];
+                                }
+                            });
+                        }
+                    });
+                }
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
+                if (totalSeconds > 0) {
+                    courseObj.totalDuration = h > 0 ? `${h}h ${m}m ${s}s` : `${m}m ${s}s`;
+                } else {
+                    courseObj.totalDuration = "0m 0s";
+                }
+            }
+            return courseObj;
+        });
 
         res.status(200).json({
             success: true,
-            data: instructorCourses,
+            data: coursesWithDuration,
         });
     } catch (error) {
         console.error(error);
@@ -367,5 +453,63 @@ exports.seedCourses = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: "Error seeding courses", error: err.message });
+    }
+}
+
+exports.fixDates = async (req, res) => {
+    try {
+        const Course = require('../models/Course');
+        const courses = await Course.find({ createdAt: { $exists: false } });
+        for (let course of courses) {
+            course.createdAt = new Date();
+            await course.save();
+        }
+        res.status(200).json({ success: true, message: `Fixed dates for ${courses.length} courses` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Error fixing dates" });
+    }
+}
+
+exports.publishCourse = async (req, res) => {
+    try {
+        const { courseId, manualDuration } = req.body;
+        const Course = require('../models/Course');
+        const course = await Course.findById(courseId).populate({
+            path: "courseContent",
+            populate: { path: "subSection" }
+        });
+
+        if (!course) return res.status(404).json({ success: false, message: "Course not found" });
+
+        let totalDuration = manualDuration;
+        if (!totalDuration) {
+            let totalSeconds = 0;
+            if (course.courseContent) {
+                course.courseContent.forEach(sec => {
+                    if (sec.subSection) {
+                        sec.subSection.forEach(sub => {
+                            if (sub.timeDuration) {
+                                const parts = sub.timeDuration.split(':').map(Number);
+                                if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) totalSeconds += parts[0] * 60 + parts[1];
+                                else if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) totalSeconds += parts[0] * 3600 + parts[1] * 60 + parts[2];
+                            }
+                        });
+                    }
+                });
+            }
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = Math.floor(totalSeconds % 60);
+            totalDuration = h > 0 ? `${h}h ${m}m ${s}s` : m > 0 ? `${m}m ${s}s` : `${s}s`;
+        }
+
+        course.totalDuration = totalDuration;
+        await course.save();
+
+        res.status(200).json({ success: true, message: "Course published", totalDuration });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Failed to publish course" });
     }
 }

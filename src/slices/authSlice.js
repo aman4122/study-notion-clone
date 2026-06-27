@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit"
 
-const tokenFromStorage = localStorage.getItem("token");
+const tokenFromStorage = sessionStorage.getItem("token");
 let initialToken = null;
 if (tokenFromStorage) {
     try {

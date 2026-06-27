@@ -51,4 +51,6 @@ const courseSchema = new mongoose.Schema({
     }]
 })
 
+courseSchema.add({ createdAt: { type: Date, default: Date.now } });
+courseSchema.add({ totalDuration: { type: String } });
 module.exports = mongoose.model("Course", courseSchema);

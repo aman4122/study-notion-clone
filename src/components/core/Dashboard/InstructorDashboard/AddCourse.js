@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { toast } from 'react-hot-toast'
 import { apiConnector } from '../../../../services/apiconnector'
 import { categories } from '../../../../services/apis'
-import { addCourseDetails, createSection, createSubSection } from '../../../../services/operations/courseDetailsAPI'
+import { addCourseDetails, createSection, createSubSection, publishCourseDetails } from '../../../../services/operations/courseDetailsAPI'
 
 const AddCourse = () => {
   const [step, setStep] = useState(1)
@@ -51,7 +51,7 @@ const AddCourse = () => {
         {/* Step Forms */}
         {step === 1 && <CourseInformationForm nextStep={() => setStep(2)} setCourseId={setCourseId} />}
         {step === 2 && <CourseBuilderForm prevStep={() => setStep(1)} nextStep={() => setStep(3)} courseId={courseId} />}
-        {step === 3 && <PublishCourseForm prevStep={() => setStep(2)} />}
+        {step === 3 && <PublishCourseForm prevStep={() => setStep(2)} courseId={courseId} />}
       </div>
 
       {/* Course Upload Tips */}
@@ -427,8 +427,8 @@ const CourseBuilderForm = ({ prevStep, nextStep, courseId }) => {
         )}
 
         <div className="flex justify-end gap-x-2 mt-4">
-          <button onClick={prevStep} className="bg-richblack-700 px-6 py-2 rounded-md font-semibold text-richblack-5 hover:bg-richblack-600 transition-all">Back</button>
-          <button onClick={nextStep} className="bg-yellow-50 px-6 py-2 rounded-md font-semibold text-richblack-900 hover:bg-yellow-100 transition-all">Next &gt;</button>
+          <button onClick={prevStep} className="bg-richblack-700 px-6 py-2 rounded-md font-semibold text-richblack-5 hover:bg-richblack-600 transition-all duration-200 hover:scale-95 active:scale-90">Back</button>
+          <button onClick={nextStep} className="bg-yellow-50 px-6 py-2 rounded-md font-semibold text-richblack-900 hover:bg-yellow-100 transition-all duration-200 hover:scale-95 active:scale-90">Next &gt;</button>
         </div>
       </div>
 
@@ -482,7 +482,21 @@ const CourseBuilderForm = ({ prevStep, nextStep, courseId }) => {
   )
 }
 
-const PublishCourseForm = ({ prevStep }) => {
+const PublishCourseForm = ({ prevStep, courseId }) => {
+  const { token } = useSelector((state) => state.auth)
+  const [manualDuration, setManualDuration] = useState("")
+
+  const handlePublish = async () => {
+    if (!courseId) {
+      toast.error("Course ID is missing")
+      return
+    }
+    const res = await publishCourseDetails(courseId, manualDuration, token)
+    if (res) {
+      window.location.href = "/dashboard/my-courses"
+    }
+  }
+
   return (
     <div className="bg-richblack-800 p-6 rounded-md border border-richblack-700 flex flex-col gap-y-6 w-full">
       <h2 className="text-2xl font-semibold text-richblack-5">Publish Settings</h2>
@@ -494,15 +508,24 @@ const PublishCourseForm = ({ prevStep }) => {
           className="w-5 h-5 accent-yellow-50 rounded"
         />
         <label htmlFor="public" className="text-richblack-5 text-lg cursor-pointer">
-          Make this course as public
+          Make this course public
         </label>
       </div>
 
+      <div className="flex flex-col gap-y-2">
+        <label className="text-sm text-richblack-5">Total Course Duration (optional)</label>
+        <input 
+          type="text"
+          placeholder="e.g. 2h 30m (Leave blank to auto-calculate)"
+          value={manualDuration}
+          onChange={(e) => setManualDuration(e.target.value)}
+          className="w-full bg-richblack-700 text-richblack-5 rounded-md p-3 border border-richblack-600 outline-none focus:border-yellow-50"
+        />
+      </div>
+
       <div className="flex justify-end gap-x-2 mt-4">
-        <button onClick={prevStep} className="bg-richblack-700 px-6 py-2 rounded-md font-semibold text-richblack-5 hover:bg-richblack-600 transition-all">Back</button>
-        <button onClick={() => {
-          window.location.href = "/dashboard/my-courses"
-        }} className="bg-yellow-50 px-6 py-2 rounded-md font-semibold text-richblack-900 hover:bg-yellow-100 transition-all">Save Changes</button>
+        <button onClick={prevStep} className="bg-richblack-700 px-6 py-2 rounded-md font-semibold text-richblack-5 hover:bg-richblack-600 transition-all duration-200 hover:scale-95 active:scale-90">Back</button>
+        <button onClick={handlePublish} className="bg-yellow-50 px-6 py-2 rounded-md font-semibold text-richblack-900 hover:bg-yellow-100 transition-all duration-200 hover:scale-95 active:scale-90">Save Changes</button>
       </div>
     </div>
   )

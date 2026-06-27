@@ -50,8 +50,8 @@ const Dashboard = () => {
 
   return (
     <div className="relative flex min-h-[calc(100vh-3.5rem)] bg-richblack-900">
-      {/* Sidebar */}
-      <div className={`transition-all duration-300 ease-in-out flex-shrink-0
+      {/* Sidebar Overlay on mobile */}
+      <div className={`transition-all duration-300 ease-in-out z-[1000] md:relative absolute flex-shrink-0 h-full
         ${sidebarOpen ? "w-[222px]" : "w-0 overflow-hidden"}`}
       >
         <Sidebar />

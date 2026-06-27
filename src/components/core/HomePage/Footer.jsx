@@ -137,7 +137,7 @@ const Footer = () => {
                         <span>|</span>
                         <Link to={"/"} className='hover:text-richblack-50 transition-all duration-200'>Terms</Link>
                     </div>
-                    <p>Made with ❤️ CodeHelp © 2023 Studynotion</p>
+                    <p>Made without any help Herald_4122 © 2026 Studynotion</p>
                 </div>
             </div>
 

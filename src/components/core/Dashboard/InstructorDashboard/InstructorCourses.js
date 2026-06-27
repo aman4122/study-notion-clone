@@ -85,11 +85,20 @@ const InstructorCourses = () => {
                 </div>
                 
                 <div className="col-span-2 flex justify-center text-sm font-medium text-richblack-50">
-                  <span className="mt-2">2h 30m</span> {/* Dummy duration as we didn't calculate total */}
+                  <span className="mt-2">{course?.totalDuration || "0m 0s"}</span>
                 </div>
                 
                 <div className="col-span-2 flex justify-center text-sm font-medium text-richblack-50">
                   <span className="mt-2">₹{course.price}</span>
+                </div>
+                
+                <div className="col-span-1 flex flex-col justify-center gap-2">
+                  <button
+                    onClick={() => navigate(`/dashboard/edit-course/${course._id}`)}
+                    className="text-yellow-50 bg-richblack-700 px-3 py-1 rounded-md text-xs font-semibold hover:bg-richblack-600 transition-all w-fit mx-auto"
+                  >
+                    Edit
+                  </button>
                 </div>
               </div>
             ))}

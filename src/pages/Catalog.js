@@ -168,6 +168,22 @@ const Catalog = () => {
                   <p className="text-richblack-300 text-sm mt-1">
                     {course.instructor?.firstName} {course.instructor?.lastName}
                   </p>
+                  
+                  {/* Star Ratings */}
+                  <div className="flex items-center gap-1 mt-2">
+                    {[1,2,3,4,5].map(i => {
+                      const avgRating = course.ratingandReviews?.length > 0
+                        ? course.ratingandReviews.reduce((acc, r) => acc + r.rating, 0) / course.ratingandReviews.length
+                        : 0;
+                      return (
+                        <span key={i} className={`text-sm ${i <= Math.round(avgRating) ? 'text-yellow-100' : 'text-richblack-600'}`}>★</span>
+                      )
+                    })}
+                    <span className="text-richblack-400 text-xs ml-1">
+                      ({course.ratingandReviews?.length || 0})
+                    </span>
+                  </div>
+                  
                   <p className="text-yellow-50 font-bold mt-2">Rs. {course.price}</p>
                 </div>
               </Link>

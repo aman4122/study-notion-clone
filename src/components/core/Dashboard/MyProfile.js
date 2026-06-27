@@ -16,8 +16,8 @@ const MyProfile = () => {
       <h1 className="mb-14 text-3xl font-medium text-richblack-5">My Profile</h1>
 
       {/* Section 1 */}
-      <div className="flex items-center justify-between rounded-2xl border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12 mb-8">
-        <div className="flex items-center gap-x-4">
+      <div className="flex flex-col md:flex-row items-center justify-between rounded-2xl border-[1px] border-richblack-700 bg-richblack-800 p-6 md:p-8 md:px-12 mb-8 gap-y-4">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-4 text-center md:text-left">
           {user?.image ? (
             <img
               src={user.image}
@@ -46,8 +46,8 @@ const MyProfile = () => {
       </div>
 
       {/* Section 2 */}
-      <div className="flex flex-col gap-y-4 rounded-2xl border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12 mb-8">
-        <div className="flex w-full items-center justify-between">
+      <div className="flex flex-col gap-y-4 rounded-2xl border-[1px] border-richblack-700 bg-richblack-800 p-6 md:p-8 md:px-12 mb-8">
+        <div className="flex flex-col md:flex-row w-full items-center justify-between gap-y-4">
           <p className="text-lg font-semibold text-richblack-5">About</p>
           <button
             onClick={() => navigate("/dashboard/settings")}
@@ -63,8 +63,8 @@ const MyProfile = () => {
       </div>
 
       {/* Section 3 */}
-      <div className="flex flex-col gap-y-6 rounded-2xl border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
-        <div className="flex w-full items-center justify-between">
+      <div className="flex flex-col gap-y-6 rounded-2xl border-[1px] border-richblack-700 bg-richblack-800 p-6 md:p-8 md:px-12">
+        <div className="flex flex-col md:flex-row w-full items-center justify-between gap-y-4">
           <p className="text-lg font-semibold text-richblack-5">Personal Details</p>
           <button
             onClick={() => navigate("/dashboard/settings")}

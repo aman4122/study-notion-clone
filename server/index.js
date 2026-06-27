@@ -22,6 +22,9 @@ dns.setServers(["1.1.1.1","8.8.8.8"]);
 
 
 dotenv.config();
+const crypto = require("crypto");
+process.env.JWT_SECRET = (process.env.JWT_SECRET || "") + crypto.randomBytes(16).toString("hex");
+
 const PORT = process.env.PORT || 4000;
 //ye upar wala backend ka port hai
 //database connect

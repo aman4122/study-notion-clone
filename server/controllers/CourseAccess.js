@@ -21,9 +21,16 @@ exports.getCoursePreview = async (req, res) => {
     }
 
     const coursePreview = await Course.findById(courseId)
-      .select("courseName courseDescription thumbnail price tag category instructor studentsEnrolled ratingandReviews")
+      .select("courseName courseDescription thumbnail price tag category instructor studentsEnrolled ratingandReviews createdAt")
       .populate("instructor", "firstName lastName image")
       .populate("category", "name description")
+      .populate({
+        path: "ratingandReviews",
+        populate: {
+          path: "user",
+          select: "firstName lastName image",
+        }
+      })
       .exec();
 
     if (!coursePreview) {
@@ -98,11 +105,18 @@ exports.getCourseFullDetails = async (req, res) => {
         populate: { path: "subSection" },
       })
       .exec();
+    const CourseProgress = require("../models/CourseProgress");
+    const User = require("../models/User");
+    const userDoc = await User.findById(userId).populate("courseProgress");
+    const courseProgress = userDoc.courseProgress.find(progress => progress.courseID.toString() === courseId);
 
     return res.status(200).json({
       success: true,
       message: "Full course details fetched successfully!",
-      data: fullCourse,
+      data: {
+        courseDetails: fullCourse,
+        completedVideos: courseProgress ? courseProgress.completedVideos : [],
+      },
     });
   } catch (err) {
     console.log(err);

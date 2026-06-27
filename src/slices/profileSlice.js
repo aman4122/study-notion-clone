@@ -1,6 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit"
 
-const userFromStorage = localStorage.getItem("user");
+const userFromStorage = sessionStorage.getItem("user");
 let initialUser = null;
 if (userFromStorage) {
     try {

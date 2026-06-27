@@ -71,7 +71,7 @@ export function saveAllSettings(token, { imageFile, profileData, passwordData, e
         }
       }
 
-      // 4. Re-fetch full user details so Redux + localStorage stay fresh
+      // 4. Re-fetch full user details so Redux + sessionStorage stay fresh
       const userResponse = await apiConnector("GET", GET_USER_DETAILS_API, null, {
         Authorization: `Bearer ${cleanToken}`,
       })
@@ -81,7 +81,7 @@ export function saveAllSettings(token, { imageFile, profileData, passwordData, e
           ? userData.image
           : `https://api.dicebear.com/5.x/initials/svg?seed=${userData.firstName} ${userData.lastName}`
         dispatch(setUser({ ...userData, image: userImage }))
-        localStorage.setItem("user", JSON.stringify(userData))
+        sessionStorage.setItem("user", JSON.stringify(userData))
       }
 
       toast.success("Profile Updated Successfully")

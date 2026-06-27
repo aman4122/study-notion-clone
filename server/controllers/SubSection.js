@@ -1,181 +1,3 @@
-// const subSection = require("../models/SubSection")
-// const Section = require("../models/Section");
-// const { uploadImageToCloudinary } = require("../utils/imageUploader");
-// const SubSection = require("../models/SubSection");
-
-// //create subSection
-
-// exports.createSubSection = async(req,res)=>{
-//     try{
-//         const {sectionId,title,timeDuration,description,videoUrl}= req.body;
-//         //data fetched
-
-//         const video =req.files.videoFile;
-//         //video file fetched
-
-
-//         if(!sectionId || !title || !timeDuration || !videoUrl || !description){
-//             return res.status(404).json({
-//                 success:false,
-//                 message:"All fields required!!!"
-//             })
-//         }
-//         //validated the data 
-
-
-
-//         const uploadDetails = await uploadImageToCloudinary(video,process.env.FOLDER_NAME);
-//         //uploading video nowww
-
-
-//         const subSectionDetails=await subSection.create({
-//             title:title,
-//             description:description,
-//             timeDuration:timeDuration,
-//             videoUrl:uploadDetails.secure_url,
-//         })
-//         //complete subsection created
-
-
-//         const updatedsection = await Section.findByIdAndUpdate(
-//             {_id:sectionId},
-//             {$push:{
-//                 subSection:subSectionDetails
-//             }},
-//             {new:true},
-
-
-//             // HW: USE POPULATE HERE TO GET FULL DATA 
-//         );
-
-
-
-//         return res.status(200).json({
-//             success:true,
-//             message:"Sub Section createed successfully!!",
-//             updatedSection,
-//         });
-//         //response returned
-//     }
-//     catch(err){
-//         return res.status(500).json({
-//                 success:false,
-//                 message:"SubSection could not be created!!!"
-//             })
-//     }
-// }
-
-
-
-
-// // HW::: UPDATE SubSection
-
-
-
-
-
-// // HW::: DELETE SUBSECTION
-
-
-
-
-
-
-
-
-
-
-// // FIX 1: Removed duplicate lowercase import of subSection
-// // SubSection (capital) is the correct one, imported below
-// const Section = require("../models/Section");
-// const { uploadImageToCloudinary } = require("../utils/imageUploader");
-// const SubSection = require("../models/SubSection");
-
-// //create subSection
-
-// exports.createSubSection = async(req,res)=>{
-//     try{
-//         // FIX 2: videoUrl removed from req.body destructuring
-//         // video URL comes from Cloudinary upload (uploadDetails.secure_url), not from req.body
-//         const {sectionId,title,timeDuration,description}= req.body;
-//         //data fetched
-
-//         const video =req.files.videoFile;
-//         //video file fetched
-
-//         // FIX 2 (cont): !videoUrl -> !video (validate the actual uploaded file, not a body field)
-//         if(!sectionId || !title || !timeDuration || !video || !description){
-//             return res.status(404).json({
-//                 success:false,
-//                 message:"All fields required!!!"
-//             })
-//         }
-//         //validated the data 
-
-
-
-//         const uploadDetails = await uploadImageToCloudinary(video,process.env.FOLDER_NAME);
-//         //uploading video nowww
-
-
-//         // FIX 3: subSection.create -> SubSection.create (was using the bad lowercase duplicate)
-//         const subSectionDetails=await SubSection.create({
-//             title:title,
-//             description:description,
-//             timeDuration:timeDuration,
-//             videoUrl:uploadDetails.secure_url,
-//         })
-//         //complete subsection created
-
-
-//         // FIX 4: variable renamed from updatedsection -> updatedSection (matches response below)
-//         const updatedSection = await Section.findByIdAndUpdate(
-//             {_id:sectionId},
-//             {$push:{
-//                 subSection:subSectionDetails
-//             }},
-//             {new:true},
-
-
-//             // HW: USE POPULATE HERE TO GET FULL DATA 
-//         );
-
-
-
-//         return res.status(200).json({
-//             success:true,
-//             message:"Sub Section createed successfully!!",
-//             updatedSection,
-//         });
-//         //response returned
-//     }
-//     catch(err){
-//         return res.status(500).json({
-//                 success:false,
-//                 message:"SubSection could not be created!!!"
-//             })
-//     }
-// }
-
-
-
-
-// // HW::: UPDATE SubSection
-
-
-
-
-
-// // HW::: DELETE SUBSECTION
-
-
-
-
-
-
-
-
-
 const Section = require("../models/Section");
 const { uploadImageToCloudinary } = require("../utils/imageUploader");
 const SubSection = require("../models/SubSection");
@@ -206,12 +28,17 @@ exports.createSubSection = async(req,res)=>{
         const uploadDetails = await uploadImageToCloudinary(video,process.env.FOLDER_NAME);
         //uploading video nowww
 
+        const durationInSeconds = Math.round(uploadDetails.duration || 0);
+        const h = Math.floor(durationInSeconds / 3600);
+        const m = Math.floor((durationInSeconds % 3600) / 60);
+        const s = durationInSeconds % 60;
+        const formattedDuration = h > 0 ? `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}` : `${m}:${s.toString().padStart(2, '0')}`;
 
         // FIX 3: subSection.create -> SubSection.create (was using the bad lowercase duplicate)
         const subSectionDetails=await SubSection.create({
             title:title,
             description:description,
-            timeDuration:timeDuration,
+            timeDuration: formattedDuration, // authentic duration
             videoUrl:uploadDetails.secure_url,
         })
         //complete subsection created
@@ -266,8 +93,8 @@ exports.updateSubSection = async(req,res)=>{
         //build update object with only provided fields
 
         if(title) updateData.title = title;
-        if(timeDuration) updateData.timeDuration = timeDuration;
         if(description) updateData.description = description;
+        // Ignore timeDuration from req.body as it's typically a dummy value ("00:00") from frontend
 
         if(req.files && req.files.videoFile){
             const video = req.files.videoFile;
@@ -277,6 +104,12 @@ exports.updateSubSection = async(req,res)=>{
             //uploading new video to cloudinary
 
             updateData.videoUrl = uploadDetails.secure_url;
+            
+            const durationInSeconds = Math.round(uploadDetails.duration || 0);
+            const h = Math.floor(durationInSeconds / 3600);
+            const m = Math.floor((durationInSeconds % 3600) / 60);
+            const s = durationInSeconds % 60;
+            updateData.timeDuration = h > 0 ? `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}` : `${m}:${s.toString().padStart(2, '0')}`;
         }
 
         const updatedSubSection = await SubSection.findByIdAndUpdate(

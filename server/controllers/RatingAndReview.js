@@ -78,8 +78,38 @@ exports.createRating = async (req, res) => {
         })
     }
 }
+//editRating
+exports.editRating = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { rating, review, courseId } = req.body;
 
+        const alreadyReviewed = await RatingAndReview.findOne({ user: userId, course: courseId });
+        if (!alreadyReviewed) {
+            return res.status(404).json({
+                success: false,
+                message: "Review not found for this user and course!!!"
+            });
+        }
 
+        // update rating and review
+        alreadyReviewed.rating = rating;
+        alreadyReviewed.review = review;
+        await alreadyReviewed.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Review updated successfully!!",
+            ratingReview: alreadyReviewed
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: "Failure, please try again!!!"
+        });
+    }
+}
 
 // FIX 6: missing async keyword — function uses await inside
 exports.getAverageRating = async (req, res) => {

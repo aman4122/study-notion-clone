@@ -8,9 +8,10 @@ exports.connect=()=>{
     })
     .then(()=>
     console.log("DB connected successfully!!"))
-    .catch((err)=> {console.log("Cannot connect!!")
+    .catch((err)=> {
+        console.log("Cannot connect to MongoDB!!")
         console.log(err);
-        process.exit(1);
+        // Removed process.exit(1) so the server doesn't crash on boot if DB fails
     })
     console.log("URL:", process.env.MONGODB_URL);
 }
