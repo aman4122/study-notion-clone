@@ -6,6 +6,11 @@ export const categories = {
 
 }
 
+//FOr Rating and Reviews
+export const ratingsEndpoints = {
+    REVIEWS_DETAILS_API: BASE_URL + "/course/getAllRatingsReviews"
+}
+
 export const endpoints = {
     SENDOTP_API: BASE_URL + "/auth/sendotp",
     SIGNUP_API: BASE_URL + "/auth/signup",

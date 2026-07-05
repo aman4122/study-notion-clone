@@ -90,7 +90,6 @@ const VideoDetailsSidebar = ({ setReviewModal }) => {
                 </div>
               </div>
 
-              {/* Sub Sections */}
               {activeStatus === course?._id && (
                 <div className="transition-[height] duration-500 ease-in-out">
                   {course.subSection.map((topic, i) => (
@@ -103,7 +102,7 @@ const VideoDetailsSidebar = ({ setReviewModal }) => {
                       key={i}
                       onClick={() => {
                         navigate(
-                          `/view-course/${courseEntireData?._id}/section/${course?._id}/sub-section/${topic?._id}`
+                          `/view-course/${courseEntireData?._id}/section/${course?._id}/sub-section/${topic?._id}`             //video click karne ke baad  url badh jaata hai bcoz of this, new things add up from top to bottom like view-course -> section -> course.id -> subsection -> topicid
                         )
                         setVideoBarActive(topic._id)
                       }}

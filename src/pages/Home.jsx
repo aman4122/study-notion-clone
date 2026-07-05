@@ -10,6 +10,7 @@ import TimelineSection from '../components/core/HomePage/TimelineSection';
 import LearningLanguageSection from '../components/core/HomePage/LearningLanguageSection';
 import InstructorSection from '../components/core/HomePage/InstructorSection';
 import ExploreMore from '../components/core/HomePage/ExploreMore';
+import ReviewSlider from '../components/common/ReviewSlider';
 
 const Home = () => {
     return (
@@ -149,6 +150,9 @@ const Home = () => {
                 <h2 className='text-2xl sm:text-4xl text-white mt-10 font-semibold'>
                     Reviews from other learners
                 </h2>
+
+
+                <ReviewSlider/>
             </div>
 
             {/* ───────── Footer — full width ───────── */}

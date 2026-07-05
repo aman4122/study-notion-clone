@@ -26,7 +26,7 @@ exports.updateCourseProgress = async (req, res) => {
     const User = require("../models/User");
     const user = await User.findById(userId).populate("courseProgress");
     
-    // Find the progress doc for this course
+    // Find the progress doc for this 
     courseProgress = user.courseProgress.find(progress => progress?.courseID?.toString() === courseId);
     
     let progressDoc;

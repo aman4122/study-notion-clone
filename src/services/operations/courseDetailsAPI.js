@@ -231,6 +231,7 @@ export const markLectureAsComplete = async (data, token) => {
   let result = null
   const toastId = toast.loading("Loading...")
   try {
+    //below single line se requst jaati hai and usse course completed hone
     const response = await apiConnector("POST", courseEndpoints.UPDATE_COURSE_PROGRESS_API, data, {
       Authorization: `Bearer ${token}`,
     })

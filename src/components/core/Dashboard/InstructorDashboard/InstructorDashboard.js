@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { fetchInstructorCourses } from '../../../../services/operations/courseDetailsAPI'
 import { useNavigate } from 'react-router-dom'
+import InstructorChart from './InstructorChart'
 
 const InstructorDashboard = () => {
   const { token } = useSelector((state) => state.auth)
@@ -30,7 +31,7 @@ const InstructorDashboard = () => {
   }
 
   return (
-    <div className="text-white">
+    <div display='flex' className="text-white">
       <h1 className="text-3xl font-medium text-richblack-5 mb-14">Instructor Dashboard</h1>
       <div className="flex flex-col gap-y-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -71,7 +72,7 @@ const InstructorDashboard = () => {
                     className="h-[200px] w-full rounded-md object-cover"
                   />
                   <div className="mt-2">
-                    <p className="text-sm font-semibold text-richblack-5 truncate">{course.courseName}</p>
+                    <p className="text-xl font-bold text-richblack-5 truncate">{course.courseName}</p>
                     <div className="mt-1 flex items-center space-x-2 text-xs text-richblack-300">
                       <p>{course.studentsEnrolled?.length || 0} students</p>
                       <p>|</p>
@@ -84,6 +85,7 @@ const InstructorDashboard = () => {
           )}
         </div>
       </div>
+      {courses.length > 0 && <InstructorChart courses={courses} />}
     </div>
   )
 }

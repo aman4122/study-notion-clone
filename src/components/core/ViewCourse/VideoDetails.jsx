@@ -164,8 +164,7 @@ const VideoDetails = () => {
       )
     } else {
       const nextSectionId = courseSectionData[currentSectionIndx + 1]._id
-      const nextSubSectionId =
-        courseSectionData[currentSectionIndx + 1].subSection[0]._id
+      const nextSubSectionId = courseSectionData[currentSectionIndx + 1].subSection[0]._id
       navigate(
         `/view-course/${courseId}/section/${nextSectionId}/sub-section/${nextSubSectionId}`
       )
@@ -200,6 +199,10 @@ const VideoDetails = () => {
     }
   }
 
+
+
+
+  ///below function only to handle things after completion odf video like marking, playing next video, updating completed lectures
   const handleLectureCompletion = async () => {
     setLoading(true)
     const res = await markLectureAsComplete(
