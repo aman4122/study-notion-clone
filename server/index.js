@@ -23,7 +23,7 @@ dns.setServers(["1.1.1.1","8.8.8.8"]);
 
 dotenv.config();
 const crypto = require("crypto");
-process.env.JWT_SECRET = (process.env.JWT_SECRET || "") + crypto.randomBytes(16).toString("hex");
+process.env.JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_for_development_only";
 
 const PORT = process.env.PORT || 4000;
 //ye upar wala backend ka port hai
@@ -36,8 +36,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin:"http://localhost:3000",
-        ////ye upar wala frontend ka port hai
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
+        ////ye upar wala frontend ka port hai (now supports deployment URL via FRONTEND_URL)
 
         credentials:true,
     })
@@ -83,3 +83,6 @@ app.get("/",(req,res)=>{
 app.listen(PORT,()=>{
     console.log(`App is runnning at ${PORT}`)
 });
+
+// Export the Express API
+module.exports = app;
