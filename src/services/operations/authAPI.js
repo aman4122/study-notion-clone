@@ -1,6 +1,7 @@
 import { toast } from "react-hot-toast"
 import { setLoading, setToken } from "../../slices/authSlice"
 import { setUser } from "../../slices/profileSlice"
+import { resetCart, syncCartWithUser } from "../../slices/cartSlice"
 import { apiConnector } from "../apiconnector"
 import { endpoints, profileEndpoints } from "../apis"
 
@@ -114,6 +115,7 @@ export function login(email, password, navigate) {
         ? userDetails.image
         : `https://api.dicebear.com/5.x/initials/svg?seed=${userDetails.firstName} ${userDetails.lastName}`
       dispatch(setUser({ ...userDetails, image: userImage }))
+      dispatch(syncCartWithUser(userDetails.email))
       
       sessionStorage.setItem("token", JSON.stringify(response.data.token))
       sessionStorage.setItem("user", JSON.stringify(userDetails))
@@ -131,6 +133,7 @@ export function logout(navigate) {
   return (dispatch) => {
     dispatch(setToken(null))
     dispatch(setUser(null))
+    dispatch(resetCart())
     sessionStorage.removeItem("token")
     sessionStorage.removeItem("user")
     toast.success("Logged Out")
