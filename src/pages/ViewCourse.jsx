@@ -19,7 +19,7 @@ const ViewCourse = () => {
 
   useEffect(() => {
     const setCourseSpecificDetails = async () => {
-      const res = await apiConnector("POST", "http://localhost:4000/api/v1/course/getCourseFullDetails", { courseId }, {
+      const res = await apiConnector("POST", process.env.REACT_APP_BASE_URL + "/course/getCourseFullDetails", { courseId }, {
         Authorization: `Bearer ${token}`,
       })
 

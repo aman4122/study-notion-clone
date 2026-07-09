@@ -14,7 +14,7 @@ const EnrolledCourses = () => {
         setLoading(true)
         const res = await apiConnector(
           "GET",
-          "http://localhost:4000/api/v1/course/getEnrolledCourses",
+          process.env.REACT_APP_BASE_URL + "/course/getEnrolledCourses",
           null,
           { Authorization: `Bearer ${token}` }
         )

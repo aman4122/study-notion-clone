@@ -30,7 +30,7 @@ const CourseReviewModal = ({ setReviewModal }) => {
     try {
       const res = await apiConnector(
         "POST",
-        "http://localhost:4000/api/v1/course/createRating",
+        process.env.REACT_APP_BASE_URL + "/course/createRating",
         { courseId: courseEntireData._id, rating, review: review.trim() },
         { Authorization: `Bearer ${token}` }
       )

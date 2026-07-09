@@ -32,7 +32,7 @@ const CourseDetails = () => {
         setLoading(true)
         const previewRes = await apiConnector(
           "POST",
-          "http://localhost:4000/api/v1/course/getCoursePreview",
+          process.env.REACT_APP_BASE_URL + "/course/getCoursePreview",
           { courseId },
           { Authorization: `Bearer ${token}` }
         )
@@ -47,7 +47,7 @@ const CourseDetails = () => {
         if (enrolled) {
           const fullRes = await apiConnector(
             "POST",
-            "http://localhost:4000/api/v1/course/getCourseFullDetails",
+            process.env.REACT_APP_BASE_URL + "/course/getCourseFullDetails",
             { courseId },
             { Authorization: `Bearer ${token}` }
           )
@@ -538,8 +538,8 @@ const ReviewForm = ({ courseId, token, existingReview }) => {
     setSubmitting(true)
     try {
       const endpoint = existingReview
-        ? "http://localhost:4000/api/v1/course/editRating"
-        : "http://localhost:4000/api/v1/course/createRating"
+        ? process.env.REACT_APP_BASE_URL + "/course/editRating"
+        : process.env.REACT_APP_BASE_URL + "/course/createRating"
 
       const res = await apiConnector(
         "POST",
