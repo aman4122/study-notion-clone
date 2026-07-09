@@ -38,8 +38,8 @@ app.use(
     cors({
         origin: [
       "http://localhost:3000", 
-      "https://study-notion-clone-xwyp-ihyw89zvw-aman412211.vercel.app", // Your Vercel domain
-      "https://study-notion-clone-xwyp.vercel.app" // Add the standard Vercel domain too
+      "https://study-notion-clone-frontend-nhj3fnot0-aman412211.vercel.app/", // Your Vercel domain
+      "https://study-notion-clone-xwyp.vercel.app" 
     ],
         ////ye upar wala frontend ka port hai (now supports deployment URL via FRONTEND_URL)
 
