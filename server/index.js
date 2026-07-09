@@ -36,14 +36,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: [
-      "http://localhost:3000", 
-      "https://study-notion-clone-frontend-nhj3fnot0-aman412211.vercel.app/", // Your Vercel domain
-      "https://study-notion-clone-xwyp.vercel.app" 
-    ],
-        ////ye upar wala frontend ka port hai (now supports deployment URL via FRONTEND_URL)
-
-        credentials:true,
+        origin: function (origin, callback) {
+            if (!origin) return callback(null, true);
+            if (origin.startsWith("http://localhost:") || origin.includes("vercel.app")) {
+                return callback(null, true);
+            }
+            return callback(new Error("Not allowed by CORS"));
+        },
+        credentials: true,
     })
 )
 
