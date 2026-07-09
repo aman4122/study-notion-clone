@@ -2,7 +2,6 @@ import React from 'react'
 import {Chart,registerables} from "chart.js"
 import { Pie } from 'react-chartjs-2';
 import { useState } from 'react';
-import { courseEndpoints } from '../../../../services/apis';
 // import courses
 
 

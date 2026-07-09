@@ -282,8 +282,6 @@
 import React, { useState, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { FiUpload } from "react-icons/fi"
-import { updateDisplayPicture, updateProfile, changePassword } from "../services/operations/profileAPI"
 import { saveAllSettings } from "../services/operations/settingsSaveAllAPI"
 
 const Settings = () => {

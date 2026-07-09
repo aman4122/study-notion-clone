@@ -27,6 +27,7 @@ const VideoDetails = () => {
 
   const [videoData, setVideoData] = useState(null)
   const [videoEnded, setVideoEnded] = useState(false)
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false)
   
   const [countdown, setCountdown] = useState(7)
@@ -240,6 +241,7 @@ const VideoDetails = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoEnded])
 
   // Smooth seeker update
@@ -299,6 +301,7 @@ const VideoDetails = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Custom Player Handlers

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiPlus, FiClock, FiCheckCircle } from 'react-icons/fi'
+import { FiPlus, FiCheckCircle } from 'react-icons/fi'
 import { useSelector } from 'react-redux'
 import { fetchInstructorCourses } from '../../../../services/operations/courseDetailsAPI'
 

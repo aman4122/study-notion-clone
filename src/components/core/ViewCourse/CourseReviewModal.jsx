@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { RxCross2 } from "react-icons/rx"
 import { useSelector } from "react-redux"
 import { apiConnector } from "../../../services/apiconnector"

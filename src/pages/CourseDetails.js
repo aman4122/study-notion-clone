@@ -3,15 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { buyCourse } from '../services/operations/studentFeaturesAPI'
 import { apiConnector } from '../services/apiconnector'
-import { categories } from '../services/apis'
 import { addToCart } from '../slices/cartSlice'
 import { toast } from 'react-hot-toast'
 import { BiInfoCircle } from "react-icons/bi"
 import { HiOutlineGlobeAlt } from "react-icons/hi"
 import { FaShareSquare } from "react-icons/fa"
-import { FaStar } from "react-icons/fa"
-
-
 const CourseDetails = () => {
   const { token } = useSelector((state) => state.auth)
   const { user } = useSelector((state) => state.profile)
@@ -64,6 +60,7 @@ const CourseDetails = () => {
       }
     }
     if (courseId) fetchCourse()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId])
 
   // ✅ isActive: array of section _ids that are currently open
@@ -86,10 +83,12 @@ const CourseDetails = () => {
 
   const handleCollapseToggle = () => {
     const allIds = fullCourseData?.courseContent?.map((s) => s._id) || []
+    // eslint-disable-next-line no-unused-vars
     const allOpen = allIds.every((id) => isActive.includes(id))
     setIsActive([])
   }
 
+  // eslint-disable-next-line no-unused-vars
   const allSectionsOpen =
     fullCourseData?.courseContent?.length > 0 &&
     fullCourseData.courseContent.every((s) => isActive.includes(s._id))

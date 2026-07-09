@@ -27,7 +27,6 @@ const VerifyEmail = () => {
       email,
       password,
       confirmPassword,
-      contactNumber,
     } = signupData
 
     dispatch(

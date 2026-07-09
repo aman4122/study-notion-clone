@@ -68,6 +68,7 @@ const EditCourse = () => {
 
   useEffect(() => {
     fetchCourse()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, token])
 
   const handleAddSection = async () => {

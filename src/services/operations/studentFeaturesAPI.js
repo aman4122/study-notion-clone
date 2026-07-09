@@ -1,7 +1,7 @@
 import { toast } from "react-hot-toast"
 import { apiConnector } from "../apiconnector"
 import { studentEndpoints } from "../apis"
-import { getUserDetails } from "./profileAPI"
+
 import { setPaymentLoading } from "../../slices/paymentSlice"
 import { resetCart } from "../../slices/cartSlice"
 

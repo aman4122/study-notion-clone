@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
 import "swiper/css/pagination"
-import { Autoplay, FreeMode, NAvigation, pagination } from 'swiper/modules'
+import { Autoplay, FreeMode } from 'swiper/modules'
 import ReactStars from "react-rating-stars-component"
 import { ratingsEndpoints } from '../../services/apis'
 import { apiConnector } from '../../services/apiconnector'
@@ -37,6 +37,7 @@ const ReviewSlider = () => {
 
         }
         fetchAllReviews();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
         <div className='text-white'>
