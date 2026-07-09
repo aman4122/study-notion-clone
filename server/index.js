@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: [process.env.FRONTEND_URL || "http://localhost:3000","https://study-notion-frontend-qhadk5lfn-aman412211.vercel.app/"],
+        origin: [process.env.FRONTEND_URL || "http://localhost:3000","https://study-notion-clone-xwyp-ihyw89zvw-aman412211.vercel.app/"],
         ////ye upar wala frontend ka port hai (now supports deployment URL via FRONTEND_URL)
 
         credentials:true,
